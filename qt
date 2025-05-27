@@ -1,0 +1,81 @@
+OOP2 Final – Qt Designer + PyQt5 GUI Soru Detaylı Rehberi
+📌 1. Soru Formatı ve Beklenen Yapı
+Bu soruda bir PyQt5 GUI uygulaması geliştirmen istenir. Qt Designer ile bir arayüz (.ui dosyası) tasarlanır ve bu arayüz Python koduyla bağlanır.
+Senin uygulaman rastgele sayılar üretmeli, kullanıcıdan işlem seçmesini beklemeli ve sonucu gösterebilmelidir.
+🧱 2. Qt Designer'da Yapılacaklar
+- 1 adet QPushButton → generateButton
+- 3 adet QLabel → 'Numbers:', 'Result:', 'Status:' + statusLabel (boş QLabel)
+- 2 adet QTextEdit → numbersTextEdit, resultTextEdit
+- 4 adet QRadioButton → sumRadio, avgRadio, maxRadio, sortRadio
+- 1 adet QComboBox → sortComboBox (içerik: Ascending, Descending)
+- Grid Layout uygula
+- Tüm bileşenlere `objectName` ver (bu isimle koda bağlanır)
+- File → Save As → `list_ui_2.ui` olarak kaydet
+⚠️ ComboBox ve Toggle Butonlar Başta Devre Dışı
+Bunları kodla kapat:
+self.sumRadio.setEnabled(False)
+self.avgRadio.setEnabled(False)
+self.maxRadio.setEnabled(False)
+self.sortRadio.setEnabled(False)
+self.sortComboBox.setEnabled(False)
+Bu satırları `app_logic.py` dosyasındaki `__init__()` fonksiyonuna yaz.
+⚙️ 3. Python Dosyaları ve Görevleri
+- `logic.py` → Sadece işlemler: sayı üret, topla, ortalama, max, sırala
+- `app_logic.py` → Arayüz yüklenir, buton bağlantıları kurulur, işlemler yapılır
+- `main.py` → Uygulamayı başlatır
+📋 4. Fonksiyonlar – Kodla Ne Yapacağım?
+📌 1) Generate Numbers Butonuna Tıklanınca:
+def generate_numbers(self):
+    import random
+    self.numbers = [random.randint(0, 99) for _ in range(40)]
+    self.numbersTextEdit.setPlainText(", ".join(map(str, self.numbers)))
+    self.statusLabel.setText("Numbers are generated")
+    self.enable_operations()
+📌 2) Toggle Butonlar Aktif Hale Gelsin:
+def enable_operations(self):
+    self.sumRadio.setEnabled(True)
+    self.avgRadio.setEnabled(True)
+    self.maxRadio.setEnabled(True)
+    self.sortRadio.setEnabled(True)
+    self.sortComboBox.setEnabled(False)
+📌 3) Seçilen İşleme Göre Sonuç Göster:
+def perform_operation(self):
+    if self.sumRadio.isChecked():
+        result = sum(self.numbers)
+        self.resultTextEdit.setPlainText(str(result))
+        self.statusLabel.setText("Sum calculated")
+
+    elif self.avgRadio.isChecked():
+        result = sum(self.numbers) / len(self.numbers)
+        self.resultTextEdit.setPlainText(str(result))
+        self.statusLabel.setText("Average calculated")
+
+    elif self.maxRadio.isChecked():
+        result = max(self.numbers)
+        self.resultTextEdit.setPlainText(str(result))
+        self.statusLabel.setText("Maximum calculated")
+
+    elif self.sortRadio.isChecked():
+        self.sortComboBox.setEnabled(True)
+        if self.sortComboBox.currentText() == "Ascending":
+            result = sorted(self.numbers)
+            self.statusLabel.setText("Sorted Ascending")
+        else:
+            result = sorted(self.numbers, reverse=True)
+            self.statusLabel.setText("Sorted Descending")
+        self.resultTextEdit.setPlainText(", ".join(map(str, result)))
+📌 5. Bağlantıların `__init__()` İçinde Yapılması ŞART
+self.generateButton.clicked.connect(self.generate_numbers)
+self.sumRadio.toggled.connect(self.perform_operation)
+self.avgRadio.toggled.connect(self.perform_operation)
+self.maxRadio.toggled.connect(self.perform_operation)
+self.sortRadio.toggled.connect(self.perform_operation)
+self.sortComboBox.currentIndexChanged.connect(self.perform_operation)
+🧠 6. Sınavda Kritik Noktalar
+- objectName vermeyi unutma (aksi halde koddan erişemezsin)
+- `.clicked.connect(...)` yazmazsan buton çalışmaz
+- `.setEnabled(False)` ile başlangıçta devre dışı bırak
+- RadioButton kontrolü `.isChecked()` ile yapılır
+- ComboBox sadece 'Sort' seçilince aktifleşmeli
+- `.setPlainText()` → QTextEdit'e yazı yazar
+- `.setText()` → QLabel'e bilgi yazar
