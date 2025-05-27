@@ -1,0 +1,76 @@
+OOP2 Final – Class / Polymorphism Soru Detaylı Rehber
+📌 1. Soru Formatı ve Beklentiler
+Bu tarz sorularda 1 ana sınıf ve ondan türeyen 1-2 alt sınıf tanımlanması istenir.
+Her sınıfta encapsulation (gizlilik), inheritance (miras), override (yeniden tanımlama), method kullanımı zorunludur.
+📁 2. Dosya Yapısı ve İsimler
+- EmployeeClass.py → Ana sınıf (base class)
+- CommissionEmployeeClass.py → Alt sınıf
+- BasePlusCommissionEmployeeClass.py → Alt sınıf
+- q1_driver.py → Test dosyası (main kodlar burada)
+
+Her class kendi dosyasında olmalı. Aksi halde modülerlik bozulur.
+🔐 3. Class’larda Olması Gereken Kodlar
+Her sınıfta şu yapılar mutlaka yer almalı:
+class Employee:
+    def __init__(self, firstName, lastName):
+        self.__firstName = firstName
+        self.__lastName = lastName
+
+    def getFirstName(self):
+        return self.__firstName
+
+    def setFirstName(self, fname):
+        self.__firstName = fname
+
+    def print_employee(self):
+        print("First Name:", self.getFirstName())
+        print("Last Name:", self.__lastName)  # HATA! getter kullanılmalı
+        # Doğrusu: print("Last Name:", self.getLastName())
+🧠 4. Alt Sınıflarda Yapılması Gerekenler
+- `super().__init__()` kullan
+- Yeni değişkenleri yine `self.__xyz` olarak tanımla
+- Getter ve Setter fonksiyonlarını yine yaz
+- Üst sınıf fonksiyonunu çağırmak için: `super().print_employee()`
+- Alt sınıfa özgü hesap fonksiyonu yaz (earnings(), points() vs.)
+class CommissionEmployee(Employee):
+    def __init__(self, firstName, lastName, rate, sales):
+        super().__init__(firstName, lastName)
+        self.__rate = rate
+        self.__sales = sales
+
+    def getRate(self):
+        return self.__rate
+
+    def earnings(self):
+        return self.__rate * self.__sales
+
+    def print_employee(self):
+        super().print_employee()
+        print("Rate:", self.getRate())
+        print("Sales:", self.__sales)  # HATA! getter kullan
+
+⚠️ 5. Sık Yapılan Hatalar
+- `self.__x` yerine `self.x` yazmak → encapsulation bozulur
+- Getter yerine direkt değişkene erişmek
+- Alt sınıfta `super().__init__()` yazmayı unutmak
+- `print()` fonksiyonunda `self.__x` kullanmak → getter ile değiştir
+- print fonksiyonuna `print_player` yerine `display` gibi isim vermek → puan kaybı olabilir
+- Tüm classları tek dosyada yazmak → modülerlik eksikliği
+
+📌 6. Sınavda Altın Kurallar
+✅ Her sınıfa getter/setter yaz
+✅ `super()` kullanmayı unutma
+✅ Tüm class'ları ayrı dosyada tut
+✅ print fonksiyonlarında sadece getter kullan
+✅ Kodlar okunur, düzenli ve modüler olsun
+✅ q1_driver.py içinde örnek nesneler oluştur ve test et
+🚀 7. Driver Dosyasına Yazılacaklar
+# q1_driver.py
+from CommissionEmployeeClass import CommissionEmployee
+
+def main():
+    ce = CommissionEmployee("Ali", "Yılmaz", 0.1, 5000)
+    ce.print_employee()
+    print("Earnings:", ce.earnings())
+
+main()
